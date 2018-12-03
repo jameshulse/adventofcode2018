@@ -13,6 +13,54 @@ func check(e error) {
 	}
 }
 
+func getFinal(parts []string) int64 {
+	var final int64 = 0
+
+	for i := 0; i < len(parts); i++ {
+		value, err := strconv.ParseInt(parts[i][1:], 10, 32)
+
+		check(err)
+
+		if parts[i][0] == '+' {
+			final += value
+		} else {
+			final -= value
+		}
+	}
+
+	return final
+}
+
+func getFirstRepeat(parts []string) int64 {
+	var result int64 = 0
+	var repeat *int64
+	var seen = make(map[int64]int64)
+
+	for repeat == nil {
+
+		for i := 0; i < len(parts); i++ {
+			curr := parts[i]
+			value, err := strconv.ParseInt(curr[1:], 10, 32)
+
+			check(err)
+
+			if curr[0] == '+' {
+				result += value
+			} else {
+				result -= value
+			}
+
+			if val, ok := seen[result]; ok && repeat == nil {
+				return val
+			}
+
+			seen[result] = result
+		}
+	}
+
+	return 0
+}
+
 func main() {
 	fmt.Println("Starting...")
 
@@ -22,19 +70,9 @@ func main() {
 
 	parts := strings.Split(string(dat), "\n")
 
-	var result int64 = 0
+	final := getFinal(parts)
+	repeat := getFirstRepeat(parts)
 
-	for i := 0; i < len(parts); i++ {
-		value, err := strconv.ParseInt(parts[i][1:], 10, 32)
-
-		check(err)
-
-		if parts[i][0] == '+' {
-			result += value
-		} else {
-			result -= value
-		}
-	}
-
-	fmt.Println("Result: ", result)
+	fmt.Println("Final Value:\t", final)
+	fmt.Println("First Repeat:\t", repeat)
 }
