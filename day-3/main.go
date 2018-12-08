@@ -13,8 +13,10 @@ func check(e error) {
 	}
 }
 
-func parseClaim(claim string) (int, int, int, int) {
+func parseClaim(claim string) (string, int, int, int, int) {
 	parts := strings.Split(claim, " ")
+
+	id := parts[0]
 
 	dimensions := strings.Split(parts[3], "x")
 
@@ -36,7 +38,7 @@ func parseClaim(claim string) (int, int, int, int) {
 
 	check(err)
 
-	return width, height, top, left
+	return id, width, height, top, left
 }
 
 func main() {
@@ -50,9 +52,11 @@ func main() {
 	claims := strings.Split(string(dat), "\n")
 
 	var fabric [FABRIC_WIDTH][FABRIC_HEIGHT]int
+	var bestClaim string
 
+	// Build fabric map
 	for _, claim := range claims {
-		width, height, top, left := parseClaim(claim)
+		_, width, height, top, left := parseClaim(claim)
 
 		for i := 0; i < width; i++ {
 			for j := 0; j < height; j++ {
@@ -61,6 +65,7 @@ func main() {
 		}
 	}
 
+	// Count overlaps
 	overlaps := 0
 
 	for i := 0; i < FABRIC_WIDTH; i++ {
@@ -71,5 +76,25 @@ func main() {
 		}
 	}
 
-	fmt.Println("Number of overlaps: ", overlaps)
+	for _, claim := range claims {
+		var overlaps bool
+
+		id, width, height, top, left := parseClaim(claim)
+
+		for i := 0; i < width; i++ {
+			for j := 0; j < height; j++ {
+				if fabric[left+i][top+j] > 1 {
+					overlaps = true
+				}
+			}
+		}
+
+		if !overlaps {
+			bestClaim = id
+			break
+		}
+	}
+
+	fmt.Println("Number of overlaps:", overlaps)
+	fmt.Println("Best claim ID:", bestClaim)
 }
