@@ -1,3 +1,13 @@
 {
-    "python.pythonPath": "${workspaceFolder}/env"
+    "python.unitTest.unittestArgs": [
+        "-v",
+        "-s",
+        ".",
+        "-p",
+        "*test*.py"
+    ],
+    "python.pythonPath": "${workspaceFolder}/env",
+    "python.unitTest.pyTestEnabled": false,
+    "python.unitTest.nosetestsEnabled": false,
+    "python.unitTest.unittestEnabled": true
 }
